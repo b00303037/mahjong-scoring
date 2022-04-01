@@ -46,7 +46,9 @@ export class PlayersPageComponent implements OnInit, OnDestroy {
         r.winnerInfos.forEach((w) => set.add(w.winnerUuid));
       });
 
-      seatStatuses.forEach((s) => set.add(s.playerUuid));
+      seatStatuses
+        .filter((s) => s.playerUuid.length !== 0)
+        .forEach((s) => set.add(s.playerUuid));
 
       return set;
     })
