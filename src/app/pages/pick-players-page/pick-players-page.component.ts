@@ -44,6 +44,8 @@ export class PickPlayersPageComponent implements OnInit, OnDestroy {
 
   onResetPickedPlayers(): void {
     this.boardService.resetSeatStatuses();
+
+    this.boardService.saveToLocalStorage();
   }
 
   ngOnDestroy(): void {

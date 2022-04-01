@@ -85,7 +85,7 @@ body {
   margin-bottom: var(--toolbar-height);
 
   .footer-toolbar {
-    padding-left: 0;
+    padding-left: 16px;
 
     position: fixed;
     right: 0;
@@ -111,7 +111,7 @@ body {
   margin-bottom: var(--toolbar-height-xsmall);
 
   .footer-toolbar {
-    padding-left: 0;
+    padding-left: 16px;
   }
 }
 
@@ -124,6 +124,11 @@ table {
 // Input
 .mat-form-field-infix {
   width: 100px !important;
+}
+
+// Select
+.mat-select-trigger {
+  height: fit-content;
 }
 
 // Table

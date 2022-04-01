@@ -137,7 +137,10 @@ export class PlayersPageComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(
         filter<ConfirmDialogResult>((result) => result === true),
-        tap(() => this.playerService.resetPlayers()),
+        tap(() => {
+          this.playerService.resetPlayers();
+          this.playerService.saveToLocalStorage();
+        }),
         takeUntil(this.destroyed$)
       )
       .subscribe();

@@ -233,7 +233,10 @@ export class RulesPageComponent implements OnInit, AfterViewInit, OnDestroy {
       .afterClosed()
       .pipe(
         filter<ConfirmDialogResult>((result) => result === true),
-        tap(() => this.ruleService.resetRules()),
+        tap(() => {
+          this.ruleService.resetRules();
+          this.ruleService.saveToLocalStorage();
+        }),
         takeUntil(this.destroyed$)
       )
       .subscribe();
