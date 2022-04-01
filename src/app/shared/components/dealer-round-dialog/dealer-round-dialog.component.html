@@ -1,0 +1,36 @@
+<h1 mat-dialog-title>設定連莊</h1>
+
+<mat-dialog-content>
+  <form [formGroup]="dealerRoundFG">
+    <!-- 連莊次數 dealerRound -->
+    <mat-form-field class="w-full">
+      <mat-label>連莊次數</mat-label>
+      <input
+        type="number"
+        inputmode="numeric"
+        step="1"
+        placeholder="請輸入連莊次數"
+        required
+        min="0"
+        max="99"
+        formControlName="dealerRound"
+        matInput
+      />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button type="button" mat-stroked-button [mat-dialog-close]="undefined">
+    取消
+  </button>
+  <button
+    type="submit"
+    mat-flat-button
+    color="primary"
+    [disabled]="dealerRoundFG.invalid"
+    (click)="onSubmit()"
+  >
+    更新
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,186 @@
+<h1 mat-dialog-title>新增一筆胡牌紀錄</h1>
+
+<mat-dialog-content>
+  <form [formGroup]="winningRecordFG">
+    <!-- 放槍玩家 loser -->
+    <mat-form-field class="w-full">
+      <mat-label>放槍玩家</mat-label>
+      <mat-select placeholder="請選擇放槍玩家" required formControlName="loser">
+        <mat-option
+          *ngFor="let player of playersOnBoard$ | async"
+          [value]="player"
+        >
+          <div class="flex items-center">
+            <span>{{ player?.avatar }} {{ player?.name }}</span>
+          </div>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-list>
+      <!-- 一炮多響 hasMultiWinners -->
+      <mat-list-item>
+        <div class="w-full flex items-center">
+          <span>一炮多響</span>
+
+          <span class="grow"></span>
+
+          <mat-slide-toggle
+            formControlName="hasMultiWinners"
+            class="mr-2"
+          ></mat-slide-toggle>
+          <button
+            type="button"
+            mat-icon-button
+            color="accent"
+            [disabled]="
+              !winningRecordFCs['hasMultiWinners'].value ||
+              winnerInfosFA.length === 3
+            "
+            (click)="addWinnerInfoFG()"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </mat-list-item>
+    </mat-list>
+
+    <div
+      *ngIf="(selectedWinnerUuids$ | async) || [] as selectedWinnerUuids"
+      class="my-2"
+    >
+      <mat-accordion formArrayName="winnerInfos" displayMode="flat">
+        <mat-expansion-panel
+          *ngFor="
+            let infoFG of winnerInfosFGs;
+            let i = index;
+            let first = first
+          "
+          [formGroupName]="i"
+          [expanded]="i === 0"
+        >
+          <mat-expansion-panel-header
+            collapsedHeight="72px"
+            expandedHeight="96px"
+          >
+            <mat-panel-title
+              class="flex justify-center"
+              style="max-width: 32px"
+            >
+              <button
+                type="button"
+                mat-icon-button
+                [disabled]="first"
+                (click)="removeWinnerInfoFG(i, $event)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-panel-title>
+
+            <mat-panel-description class="flex flex-wrap">
+              <div class="w-full text-black dark:text-white">
+                <span
+                  >{{ infoFG.controls["winner"].value?.avatar }}
+                  {{ infoFG.controls["winner"].value?.name }}</span
+                >
+              </div>
+
+              <div class="w-full flex">
+                <div class="flex flex-col items-center">
+                  <span> 底台 </span>
+                  <span>{{ infoFG.controls["basePoints"].value }} 台</span>
+                </div>
+
+                <div class="flex flex-col items-center ml-2">
+                  <span> 牌型 </span>
+                  <span> {{ infoFG.controls["rulePoints"].value }} 台 </span>
+                </div>
+
+                <div
+                  *ngIf="infoFG.controls['dealerPoints'].value"
+                  class="flex flex-col items-center ml-2"
+                >
+                  <span> 莊家 </span>
+                  <span> {{ infoFG.controls["dealerPoints"].value }} 台 </span>
+                </div>
+
+                <span class="grow"></span>
+
+                <div class="flex flex-col items-center font-bold ml-4">
+                  <span> 總計 </span>
+                  <span> {{ infoFG.controls["totalPoints"].value }} 台 </span>
+                </div>
+              </div>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <!-- 胡牌玩家 winner -->
+          <mat-form-field class="w-full">
+            <mat-label>胡牌玩家</mat-label>
+            <mat-select
+              placeholder="請選擇胡牌玩家"
+              required
+              [disabled]="winningRecordFCs['loser'].value === null"
+              formControlName="winner"
+            >
+              <mat-option
+                *ngFor="let player of playersOnBoard$ | async"
+                [value]="player"
+                [disabled]="
+                  player.uuid === winningRecordFCs['loser'].value?.uuid ||
+                  selectedWinnerUuids.includes(player.uuid)
+                "
+              >
+                <div class="flex items-center">
+                  <span>{{ player?.avatar }} {{ player?.name }}</span>
+                </div>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="w-full">
+            <mat-label>胡牌牌型</mat-label>
+            <mat-select
+              placeholder="請選擇胡牌牌型"
+              [disabled]="winningRecordFCs['loser'].value === null"
+              formControlName="rules"
+              [compareWith]="compareRule"
+              multiple
+            >
+              <mat-select-trigger>
+                <mat-chip-list>
+                  <mat-chip *ngFor="let rule of infoFG.controls['rules'].value"
+                    >{{ rule.points }} {{ rule.name }}</mat-chip
+                  >
+                </mat-chip-list>
+              </mat-select-trigger>
+              <mat-optgroup
+                *ngFor="let group of ruleGroups$ | async"
+                [label]="group.points + '台'"
+              >
+                <mat-option *ngFor="let rule of group.rules" [value]="rule">
+                  {{ rule.name }}
+                </mat-option>
+              </mat-optgroup>
+            </mat-select>
+          </mat-form-field>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button type="button" mat-stroked-button [mat-dialog-close]="undefined">
+    取消
+  </button>
+  <button
+    type="submit"
+    mat-flat-button
+    color="primary"
+    [disabled]="winningRecordFG.invalid"
+    (click)="onSubmit()"
+  >
+    新增
+  </button>
+</mat-dialog-actions>

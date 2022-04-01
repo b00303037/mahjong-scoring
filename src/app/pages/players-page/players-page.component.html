@@ -1,0 +1,69 @@
+<div class="page-with-footer-toolbar flex flex-wrap justify-center">
+  <ng-container *ngIf="players$ | async as players">
+    <span class="w-full text-xl text-center my-2">
+      {{ players.length < 4 ? "請新增至少 4 名玩家" : "新增完成 請按下一步" }}
+    </span>
+
+    <div
+      *ngFor="let player of players"
+      class="w-32 h-32 bg-white dark:bg-black border-2 rounded-almost flex flex-col items-center m-2 p-4 cursor-pointer"
+      [matMenuTriggerFor]="playerMenu"
+      [matMenuTriggerData]="{ player }"
+    >
+      <span class="text-4xl my-2">{{ player.avatar }}</span>
+      <span>{{ player.name }}</span>
+    </div>
+
+    <div
+      *ngIf="players.length < 8"
+      class="w-32 h-32 bg-white dark:bg-black border-2 rounded-almost flex justify-center items-center m-2 p-4 cursor-pointer"
+      (click)="onAddPlayer()"
+    >
+      <span class="text-4xl font-bold">＋</span>
+    </div>
+
+    <mat-toolbar class="footer-toolbar flex mat-elevation-z8">
+      <span class="grow"></span>
+
+      <button
+        type="button"
+        mat-flat-button
+        [disabled]="
+          (playerUuidsInUse$ | async)?.size !== 0 || players.length === 0
+        "
+        (click)="onResetPlayers()"
+      >
+        重置玩家
+      </button>
+
+      <button
+        type="button"
+        mat-flat-button
+        color="primary"
+        [disabled]="((players$ | async)?.length ?? 0) < 4"
+        routerLink="/rules"
+      >
+        下一步
+      </button>
+    </mat-toolbar>
+  </ng-container>
+</div>
+
+<mat-menu #playerMenu="matMenu">
+  <ng-template matMenuContent let-player="player">
+    <button type="button" (click)="onUpdatePlayer(player)" mat-menu-item>
+      <mat-icon>edit</mat-icon>
+      <span>編輯</span>
+    </button>
+    <button
+      type="button"
+      mat-menu-item
+      color="warn"
+      [disabled]="(playerUuidsInUse$ | async)?.has(player.uuid)"
+      (click)="onDeletePlayer(player)"
+    >
+      <mat-icon>delete</mat-icon>
+      <span>刪除</span>
+    </button>
+  </ng-template>
+</mat-menu>

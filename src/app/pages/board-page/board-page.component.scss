@@ -1,0 +1,82 @@
+.board {
+  width: 18em; // (player width + margin * 2) * 2
+  height: 18em;
+
+  position: relative;
+
+  .board-wind {
+    width: 2em;
+    height: 2em;
+  }
+  .board-wind {
+    position: absolute;
+    top: 8em; // (board width - board-wind width) / 2
+    right: 8em;
+    bottom: 8em;
+    left: 8em;
+  }
+}
+
+.player {
+  width: 8em;
+  height: 8em;
+  margin: 0.5em;
+
+  position: relative;
+
+  .avatar {
+    font-size: 1.25em;
+    line-height: 1;
+    margin: 0.125em 0 0.125em 0;
+  }
+  .name {
+    margin: 0.125em 0 0.125em 0;
+  }
+  .points {
+    font-size: 2.25em;
+    line-height: 1;
+  }
+
+  .badge {
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 50%;
+
+    display: none;
+    position: absolute;
+
+    font-size: 1em;
+    line-height: 1.5em;
+    text-align: center;
+  }
+  .badge.ready-hand {
+    top: 0.125em;
+    left: 0.125em;
+
+    color: #fff;
+    background-color: goldenrod;
+  }
+  .badge.dealer-round {
+    top: 0.125em;
+    right: 0.125em;
+
+    color: #fff;
+    background-color: tomato;
+  }
+  .badge.wind {
+    right: 0.125em;
+    bottom: 0.125em;
+
+    color: #fff;
+    background-color: steelblue;
+  }
+}
+
+.player.ready-hand .badge.ready-hand,
+.player.dealer-round .badge.dealer-round,
+.player.E .badge.E,
+.player.S .badge.S,
+.player.W .badge.W,
+.player.N .badge.N {
+  display: block;
+}

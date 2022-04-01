@@ -1,0 +1,30 @@
+.player {
+  position: relative;
+
+  .badge {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+
+    display: none;
+    position: absolute;
+
+    font-size: 1rem;
+    line-height: 1.5rem;
+    text-align: center;
+  }
+  .badge.wind {
+    right: 0.125rem;
+    bottom: 0.125rem;
+
+    color: #fff;
+    background-color: steelblue;
+  }
+}
+
+.player.E .badge.E,
+.player.S .badge.S,
+.player.W .badge.W,
+.player.N .badge.N {
+  display: block;
+}

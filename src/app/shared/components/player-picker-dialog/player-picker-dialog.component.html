@@ -1,0 +1,38 @@
+<h1 mat-dialog-title>選擇玩家</h1>
+
+<mat-dialog-content>
+  <form *ngIf="players$ | async as players" [formGroup]="playerPickerFG">
+    <div class="flex justify-between items-center">
+      <button mat-icon-button (click)="changePlayer(-1)">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <div class="text-center">
+        <div class="text-5xl my-2">{{ players[playerIndex]?.avatar }}</div>
+        <span class="text-sm"
+          >{{ playerIndex === -1 ? "?" : playerIndex + 1 }} /
+          {{ players.length }}</span
+        >
+      </div>
+
+      <button mat-icon-button (click)="changePlayer(1)">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button type="button" mat-stroked-button [mat-dialog-close]="undefined">
+    取消
+  </button>
+  <button
+    type="submit"
+    mat-flat-button
+    color="primary"
+    [disabled]="playerPickerFG.invalid"
+    (click)="onSubmit()"
+  >
+    確認
+  </button>
+</mat-dialog-actions>

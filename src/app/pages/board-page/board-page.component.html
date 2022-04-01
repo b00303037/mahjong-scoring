@@ -1,0 +1,151 @@
+<div class="page-with-footer-toolbar flex flex-wrap justify-center text-base">
+  <ng-container *ngIf="boardSeats$ | async as boardSeats">
+    <ng-container *ngIf="boardWind$ | async as boardWind">
+      <span class="w-full text-xl text-center my-2">
+        {{ boardWind | i18nSelect: WINDS_MAPPING }}圈
+        {{ dealerWind$ | async | i18nSelect: WINDS_MAPPING }}風
+      </span>
+
+      <div class="board flex flex-wrap text-base sm:text-xl lg:text-3xl">
+        <div
+          *ngFor="let boardSeat of boardSeats; let i = index"
+          class="player w-32 h-32 bg-white dark:bg-black border-2 rounded-almost flex flex-col justify-center text-center m-2 p-4 cursor-pointer"
+          [style.order]="seatOrders[i]"
+          [ngClass]="{
+            E: i === 0,
+            S: i === 1,
+            W: i === 2,
+            N: i === 3,
+            'ready-hand': boardSeat.seatStatus.isReadyHand,
+            'dealer-round': boardSeat.seatStatus.isDealer
+          }"
+          [matMenuTriggerFor]="boardSeatMenu"
+          [matMenuTriggerData]="{ boardSeat }"
+        >
+          <span class="avatar">{{ boardSeat.player?.avatar }}</span>
+          <span class="name">{{ boardSeat.player?.name }}</span>
+          <span
+            class="points"
+            [ngClass]="{
+              'text-red-500': boardSeat.points < 0,
+              'text-green-500': boardSeat.points > 0
+            }"
+          >
+            {{ boardSeat.points * ((pointPrice$ | async) ?? 0) }}
+          </span>
+
+          <span *ngIf="recordReadyHand$ | async" class="badge ready-hand"
+            >聽</span
+          >
+          <span class="badge dealer-round">
+            {{
+              boardSeat.seatStatus.dealerRound === 0
+                ? "莊"
+                : boardSeat.seatStatus.dealerRound
+            }}
+          </span>
+          <span *ngFor="let wind of WINDS" class="badge wind" [ngClass]="wind">
+            {{ WINDS_MAPPING[wind] }}
+          </span>
+        </div>
+
+        <button
+          class="board-wind border-2 flex justify-center items-center rotate-45 bg-white dark:bg-black"
+          (click)="changeWind()"
+        >
+          <span class="-rotate-45">
+            {{ boardWind | i18nSelect: WINDS_MAPPING }}
+          </span>
+        </button>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <mat-toolbar class="footer-toolbar flex mat-elevation-z8">
+    <button
+      type="button"
+      mat-flat-button
+      [disabled]="((records$ | async)?.length ?? 0) === 0"
+      (click)="onDeleteLastRecord()"
+    >
+      回復上一筆紀錄
+    </button>
+
+    <span class="grow"></span>
+
+    <button
+      type="button"
+      mat-flat-button
+      [disabled]="((records$ | async)?.length ?? 0) !== 0"
+      (click)="onResetBoard()"
+    >
+      重置牌桌
+    </button>
+
+    <button
+      type="button"
+      mat-flat-button
+      color="primary"
+      [matMenuTriggerFor]="recordMenu"
+    >
+      新增紀錄
+    </button>
+  </mat-toolbar>
+</div>
+
+<mat-menu #boardSeatMenu="matMenu">
+  <ng-template matMenuContent let-boardSeat="boardSeat">
+    <button
+      *ngIf="recordReadyHand$ | async"
+      type="button"
+      mat-menu-item
+      (click)="toggleReadyHand(boardSeat)"
+    >
+      <mat-icon>hearing</mat-icon>
+      <span>{{ boardSeat.seatStatus.isReadyHand ? "取消聽牌" : "聽牌" }}</span>
+    </button>
+
+    <button
+      type="button"
+      mat-menu-item
+      (click)="onChangeOrUpdateDealer(boardSeat)"
+    >
+      <mat-icon>{{
+        !boardSeat.seatStatus.isDealer ? "star_rate" : "hotel_class"
+      }}</mat-icon>
+      <span>{{
+        !boardSeat.seatStatus.isDealer ? "設為莊家" : "設定連莊"
+      }}</span>
+    </button>
+
+    <button
+      type="button"
+      mat-menu-item
+      (click)="onChangePlayer(boardSeat.player)"
+    >
+      <mat-icon>swap_horiz</mat-icon>
+      <span>更換玩家</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #recordMenu="matMenu">
+  <ng-template matMenuContent>
+    <button type="button" (click)="onAddRecord(results.Drawn)" mat-menu-item>
+      <mat-icon>air</mat-icon>
+      <span>流局</span>
+    </button>
+    <button type="button" (click)="onAddRecord(results.Winning)" mat-menu-item>
+      <mat-icon>military_tech</mat-icon>
+      <span>胡牌</span>
+    </button>
+    <button
+      type="button"
+      (click)="onAddRecord(results.SelfDrawn)"
+      mat-menu-item
+    >
+      <mat-icon>emoji_events</mat-icon>
+      <span>自摸</span>
+    </button>
+  </ng-template>
+</mat-menu>

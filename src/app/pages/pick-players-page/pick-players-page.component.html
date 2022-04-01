@@ -1,0 +1,60 @@
+<div class="page-with-footer-toolbar flex flex-wrap justify-center">
+  <ng-container *ngIf="pickedPlayerUuids$ | async as pickedPlayerUuids">
+    <span class="w-full text-xl text-center my-2">
+      {{
+        pickedPlayerUuids.length < 4
+          ? "請選擇「" +
+            (WINDS[pickedPlayerUuids.length] | i18nSelect: WINDS_MAPPING) +
+            "」風位的玩家"
+          : "選擇完成 請按下一步"
+      }}
+    </span>
+
+    <div
+      *ngFor="let player of players$ | async"
+      class="player w-32 h-32 bg-white dark:bg-black border-2 rounded-almost flex flex-col justify-center text-center m-2 p-4"
+      [ngClass]="{
+        E: pickedPlayerUuids[0] === player.uuid,
+        S: pickedPlayerUuids[1] === player.uuid,
+        W: pickedPlayerUuids[2] === player.uuid,
+        N: pickedPlayerUuids[3] === player.uuid
+      }"
+      [class.cursor-pointer]="
+        pickedPlayerUuids.length < 4 || pickedPlayerUuids.includes(player.uuid)
+      "
+      (click)="onPickPlayer(player)"
+    >
+      <span class="text-4xl my-2">{{ player.avatar }}</span>
+      <span>{{ player.name }}</span>
+
+      <span *ngFor="let wind of WINDS" class="badge wind" [ngClass]="wind">
+        {{ WINDS_MAPPING[wind] }}
+      </span>
+    </div>
+
+    <mat-toolbar class="footer-toolbar flex mat-elevation-z8">
+      <button type="button" mat-flat-button routerLink="/rules">上一步</button>
+
+      <span class="grow"></span>
+
+      <button
+        type="button"
+        mat-flat-button
+        [disabled]="pickedPlayerUuids.length === 0"
+        (click)="onResetPickedPlayers()"
+      >
+        重新選擇
+      </button>
+
+      <button
+        type="button"
+        mat-flat-button
+        color="primary"
+        [disabled]="pickedPlayerUuids.length < 4"
+        routerLink="/board"
+      >
+        下一步
+      </button>
+    </mat-toolbar>
+  </ng-container>
+</div>
