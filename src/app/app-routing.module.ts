@@ -44,7 +44,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    component: BoardPageComponent,
+    redirectTo: 'board',
   },
 ];
 
