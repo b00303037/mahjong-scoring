@@ -98,12 +98,10 @@ export class RulesPageComponent implements OnInit, AfterViewInit, OnDestroy {
         const set = new Set<string>();
 
         records.forEach((r) => {
-          set.add(r.loserUuid);
-
-          r.winnerInfos.forEach((w) => set.add(w.winnerUuid));
+          r.winnerInfos.forEach((w) =>
+            w?.ruleUuids.forEach((ruleUuid) => set.add(ruleUuid))
+          );
         });
-
-        console.log('ruleUuidsInUse', set);
 
         return set;
       })

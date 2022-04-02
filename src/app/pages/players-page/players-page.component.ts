@@ -50,8 +50,6 @@ export class PlayersPageComponent implements OnInit, OnDestroy {
         .filter((s) => s.playerUuid.length !== 0)
         .forEach((s) => set.add(s.playerUuid));
 
-      console.log('playerUuidsInUse', set);
-
       return set;
     })
   );

@@ -22,7 +22,7 @@ import { Settings } from 'src/app/shared/models/settings';
 import { Rule } from 'src/app/shared/models/rule';
 import { SeatStatus } from 'src/app/shared/models/seat-status';
 import { Record } from 'src/app/shared/models/record';
-import { RecordRow } from 'src/app/shared/models/record-row';
+import { RecordCol, RecordRow } from 'src/app/shared/models/record-row';
 import { WINDS_MAPPING } from 'src/app/shared/models/wind.models';
 import { EResults, RESULTS_MAPPING } from 'src/app/shared/models/result.models';
 
@@ -42,8 +42,6 @@ export class RecordsPageComponent implements OnInit, AfterViewInit {
           ...players.map((p) => p.uuid),
           'result',
         ];
-
-        console.log(this.displayedColumns);
       });
     })
   );
@@ -51,6 +49,12 @@ export class RecordsPageComponent implements OnInit, AfterViewInit {
 
   recordRows: Array<RecordRow> = [];
   displayedColumns: Array<string> = [];
+  totalPoints: { [key: string]: number } = {};
+  totalResults: { [key: string]: number } = {
+    [EResults.Drawn]: 0,
+    [EResults.Winning]: 0,
+    [EResults.SelfDrawn]: 0,
+  };
 
   WINDS_MAPPING = WINDS_MAPPING;
   RESULTS_MAPPING = RESULTS_MAPPING;
@@ -83,7 +87,19 @@ export class RecordsPageComponent implements OnInit, AfterViewInit {
           setTimeout(() => {
             this.recordRows = recordRows;
 
-            console.log(this.recordRows);
+            this.totalPoints = {};
+            this.totalResults = this.recordRows.reduce<{
+              [key: string]: number;
+            }>((totalResults, r) => {
+              totalResults[r.result] = (totalResults[r.result] ?? 0) + 1;
+
+              return totalResults;
+            }, {});
+            this.displayedColumns
+              .filter((d) => !['winds', 'result'].includes(d))
+              .forEach(
+                (d) => (this.totalPoints[d] = this.sumRecordRowPoints(d))
+              );
           })
         ),
         takeUntil(this.destroyed$)
@@ -142,6 +158,14 @@ export class RecordsPageComponent implements OnInit, AfterViewInit {
     });
 
     return row;
+  }
+
+  sumRecordRowPoints(playerUuid: string): number {
+    return this.recordRows.reduce<number>((total, r) => {
+      total += (r[playerUuid] as RecordCol)?.points ?? 0;
+
+      return total;
+    }, 0);
   }
 
   onResetRecords(): void {

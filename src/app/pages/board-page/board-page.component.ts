@@ -78,8 +78,6 @@ export class BoardPageComponent implements OnInit, OnDestroy {
         return boardSeat;
       });
 
-      console.log('boardSeats', boardSeats);
-
       return boardSeats;
     })
   );

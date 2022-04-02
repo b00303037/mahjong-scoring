@@ -9,7 +9,7 @@ export interface RecordRow {
   [key: string]: RecordCol | EWinds | EResults;
 }
 
-interface RecordCol {
+export interface RecordCol {
   points: number;
   wind: EWinds;
   dealerRound: number;

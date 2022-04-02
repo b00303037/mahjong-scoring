@@ -22,8 +22,7 @@ export class Record {
   }) {
     this.wind = data.wind ?? this.wind;
     this.seatStatuses =
-      data.seatStatuses.map((s) => new SeatStatus({ ...s })) ??
-      this.seatStatuses;
+      data.seatStatuses.map((s) => new SeatStatus(s)) ?? this.seatStatuses;
     this.result = data.result ?? this.result;
     this.winnerInfos = data.winnerInfos ?? this.winnerInfos;
     this.loserUuid = data.loserUuid ?? this.loserUuid;

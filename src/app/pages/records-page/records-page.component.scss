@@ -1,5 +1,27 @@
+@use "sass:map";
+@use "@angular/material" as mat;
+
+@mixin color($theme) {
+  $color-config: mat.get-color-config($theme);
+
+  $primary-palette: map.get($color-config, "primary");
+
+  #records-table-container .mat-table-sticky {
+    color: mat.get-color-from-palette($primary-palette);
+    background-color: mat.get-color-from-palette($primary-palette, 50);
+  }
+}
+
+@mixin theme($theme) {
+  $color-config: mat.get-color-config($theme);
+
+  @if $color-config != null {
+    @include color($theme);
+  }
+}
+
 #records-table-container {
-  max-height: max(75vh, 250px);
+  max-height: max(70vh, 250px);
 
   .mat-column-winds,
   .mat-column-result {
@@ -7,30 +29,30 @@
     min-width: 64px;
   }
   .record-col {
-    min-width: 96px;
+    min-width: 40px;
   }
-}
 
-.badge {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
+  .badge {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
 
-  display: inline-block;
+    display: inline-block;
 
-  font-size: 1rem;
-  line-height: 1.5rem;
-  text-align: center;
-}
-.badge.wind {
-  color: #fff;
-  background-color: steelblue;
-}
-.badge.dealer-round {
-  color: #fff;
-  background-color: tomato;
-}
-.badge.ready-hand {
-  color: #fff;
-  background-color: goldenrod;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    text-align: center;
+  }
+  .badge.wind {
+    color: #fff;
+    background-color: steelblue;
+  }
+  .badge.dealer-round {
+    color: #fff;
+    background-color: tomato;
+  }
+  .badge.ready-hand {
+    color: #fff;
+    background-color: goldenrod;
+  }
 }

@@ -4,6 +4,7 @@
 // Plus imports for other components in your app.
 @use "./app/app.component.scss" as app;
 @use "./app/pages/rules-page/rules-page.component.scss" as rulesPage;
+@use "./app/pages/records-page/records-page.component.scss" as recordsPage;
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
@@ -41,11 +42,13 @@ $dark-theme: mat.define-dark-theme(
 @include mat.all-component-themes($light-theme);
 @include app.theme($light-theme);
 @include rulesPage.theme($light-theme);
+@include recordsPage.theme($light-theme);
 
 .dark {
   @include mat.all-component-colors($dark-theme);
   @include app.theme($dark-theme);
   @include rulesPage.theme($dark-theme);
+  @include recordsPage.theme($dark-theme);
 }
 
 $grey: mat.define-palette(mat.$grey-palette);
