@@ -1,8 +1,105 @@
 <div class="page-with-footer-toolbar flex flex-wrap justify-center">
   <span class="w-full text-xl text-center my-2">牌局紀錄</span>
 
-  <div *ngFor="let record of records$ | async">
-    <!-- TODO -->
+  <div
+    id="records-table-container"
+    class="w-screen max-w-3xl border-2 overflow-auto"
+  >
+    <table
+      mat-table
+      recycleRows
+      [dataSource]="recordRows"
+      matSort
+      class="w-full h-full"
+    >
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let recordRow; columns: displayedColumns"></tr>
+
+      <!-- 風圈 winds: boardWind, dealerWind -->
+      <ng-container matColumnDef="winds" sticky>
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="flex flex-col items-center">
+            <span>風圈</span>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let recordRow">
+          <div class="flex flex-col items-center">
+            <span>{{ recordRow.boardWind | i18nSelect: WINDS_MAPPING }}圈</span>
+            <span
+              >{{ recordRow.dealerWind | i18nSelect: WINDS_MAPPING }}風</span
+            >
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- TODO display rules ? -->
+      <ng-container
+        *ngFor="let player of players$ | async"
+        [matColumnDef]="player.uuid"
+      >
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="flex flex-col items-center">
+            <span class="text-xl my-2">{{ player.avatar }}</span>
+            <span>{{ player.name }}</span>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let recordRow" class="record-col h-full">
+          <div class="h-full flex flex-col justify-center items-center py-2">
+            <span
+              [ngClass]="{
+                'text-red-500': recordRow[player.uuid]?.points < 0,
+                'text-green-500': recordRow[player.uuid]?.points > 0
+              }"
+              >{{ recordRow[player.uuid]?.points }}</span
+            >
+
+            <div class="grow">
+              <div class="badge wind">
+                {{ recordRow[player.uuid]?.wind | i18nSelect: WINDS_MAPPING }}
+              </div>
+              <div
+                *ngIf="(recordRow[player.uuid]?.dealerRound ?? -1) !== -1"
+                class="badge dealer-round ml-1"
+              >
+                {{
+                  recordRow[player.uuid]?.dealerRound === 0
+                    ? "莊"
+                    : recordRow[player.uuid]?.dealerRound
+                }}
+              </div>
+              <div
+                *ngIf="recordRow[player.uuid]?.isReadyHand"
+                class="badge ready-hand ml-1"
+              >
+                聽
+              </div>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- 結果 result: result -->
+      <ng-container matColumnDef="result" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="flex flex-col items-center">
+            <span>結果</span>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let recordRow">
+          <div
+            class="flex flex-col items-center"
+            [class]="{
+              'text-red-500': recordRow.result === results.Winning,
+              'text-green-500': recordRow.result === results.SelfDrawn
+            }"
+          >
+            <span>{{
+              "" + recordRow.result | i18nSelect: RESULTS_MAPPING
+            }}</span>
+          </div>
+        </td>
+      </ng-container>
+    </table>
   </div>
 
   <mat-toolbar class="footer-toolbar flex mat-elevation-z8">

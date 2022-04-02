@@ -21,11 +21,12 @@
 }
 
 #rules-table-container {
-  height: max(75vh, 250px);
+  max-height: max(75vh, 250px);
 
   .mat-column-edit,
   .mat-column-delete {
     width: 56px;
+    min-width: 56px;
     text-align: center;
   }
 }

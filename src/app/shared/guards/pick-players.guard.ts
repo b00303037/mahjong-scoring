@@ -8,7 +8,7 @@ import {
 } from '@angular/router';
 
 import { combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 
 import { PlayerService } from '../services/player.service';
 import { BoardService } from '../services/board.service';
@@ -35,6 +35,7 @@ export class PickPlayersGuard implements CanActivate {
       this.playerService.playersSource$,
       this.boardService.seatStatusesSource$,
     ]).pipe(
+      take(1),
       map(([players, seatStatuses]) => {
         if (players.length < 4) {
           return this.router.parseUrl('/players');

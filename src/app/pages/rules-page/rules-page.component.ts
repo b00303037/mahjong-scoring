@@ -103,6 +103,8 @@ export class RulesPageComponent implements OnInit, AfterViewInit, OnDestroy {
           r.winnerInfos.forEach((w) => set.add(w.winnerUuid));
         });
 
+        console.log('ruleUuidsInUse', set);
+
         return set;
       })
     );

@@ -1,0 +1,36 @@
+#records-table-container {
+  max-height: max(75vh, 250px);
+
+  .mat-column-winds,
+  .mat-column-result {
+    width: 64px;
+    min-width: 64px;
+  }
+  .record-col {
+    min-width: 96px;
+  }
+}
+
+.badge {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+
+  display: inline-block;
+
+  font-size: 1rem;
+  line-height: 1.5rem;
+  text-align: center;
+}
+.badge.wind {
+  color: #fff;
+  background-color: steelblue;
+}
+.badge.dealer-round {
+  color: #fff;
+  background-color: tomato;
+}
+.badge.ready-hand {
+  color: #fff;
+  background-color: goldenrod;
+}

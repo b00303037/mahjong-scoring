@@ -31,7 +31,7 @@
               'text-green-500': boardSeat.points > 0
             }"
           >
-            {{ boardSeat.points * ((pointPrice$ | async) ?? 0) }}
+            {{ boardSeat.points }}
           </span>
 
           <span *ngIf="recordReadyHand$ | async" class="badge ready-hand"

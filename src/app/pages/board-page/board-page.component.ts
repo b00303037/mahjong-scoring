@@ -10,7 +10,7 @@ import { PlayerService } from 'src/app/shared/services/player.service';
 import { RuleService } from 'src/app/shared/services/rule.service';
 import { BoardService } from 'src/app/shared/services/board.service';
 import { RecordService } from 'src/app/shared/services/record.service';
-import { sumRecordPoints } from 'src/app/shared/helpers/points-calculation.helper';
+import { sumRecordsPoints } from 'src/app/shared/helpers/points-calculation.helper';
 
 import { DealerRoundDialogComponent } from 'src/app/shared/components/dealer-round-dialog/dealer-round-dialog.component';
 import {
@@ -66,7 +66,7 @@ export class BoardPageComponent implements OnInit, OnDestroy {
         const boardSeat = {
           player: players.find((p) => p.uuid === s.playerUuid) as Player,
           seatStatus: s,
-          points: sumRecordPoints({
+          points: sumRecordsPoints({
             playerUuid: s.playerUuid,
             basePoints,
             excludeDealerPoint,
@@ -78,11 +78,10 @@ export class BoardPageComponent implements OnInit, OnDestroy {
         return boardSeat;
       });
 
+      console.log('boardSeats', boardSeats);
+
       return boardSeats;
     })
-  );
-  pointPrice$: Observable<number> = this.ruleService.settingsSource$.pipe(
-    map((settings) => settings.pointPrice)
   );
   recordReadyHand$: Observable<boolean> = this.ruleService.settingsSource$.pipe(
     map((settings) => settings.recordReadyHand)

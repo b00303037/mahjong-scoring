@@ -72,7 +72,7 @@ export function calcSelfDrawnPoints(data: {
   };
 }
 
-export function sumRecordPoints(data: {
+export function sumRecordsPoints(data: {
   playerUuid: string;
   basePoints: number;
   excludeDealerPoint: boolean;
@@ -82,98 +82,113 @@ export function sumRecordPoints(data: {
   const { playerUuid, basePoints, excludeDealerPoint, records, rules } = data;
 
   const totalPoints = records.reduce<number>((points, record) => {
-    const { seatStatuses, result, winnerInfos, loserUuid } = record;
-
-    const dealerSeatStatus = seatStatuses.find((s) => s.isDealer) as SeatStatus;
-    const winnerSeatStatuses = seatStatuses.filter((s) =>
-      winnerInfos.find((w) => w.winnerUuid === s.playerUuid)
+    return calcRecordPoints(
+      points,
+      record,
+      playerUuid,
+      basePoints,
+      excludeDealerPoint,
+      rules
     );
-    const loserSeatStatus = seatStatuses.find(
-      (s) => s.playerUuid === loserUuid
-    );
-
-    const dealerUuid = dealerSeatStatus.playerUuid;
-
-    const isDealer = dealerUuid === playerUuid;
-    const isWinner =
-      winnerSeatStatuses.find((s) => s.playerUuid === playerUuid) !== undefined;
-    const isLoser = loserSeatStatus?.playerUuid === playerUuid;
-
-    switch (result) {
-      case EResults.Winning:
-        if (isWinner) {
-          const winnerInfo = record.winnerInfos.find(
-            (w) => w.winnerUuid === playerUuid
-          ) as WinnerInfo;
-
-          const hasDealerPoint =
-            isDealer || loserSeatStatus?.playerUuid === dealerUuid;
-
-          points += calcWinnerInfoPoints({
-            basePoints,
-            hasDealerPoint,
-            excludeDealerPoint,
-            dealerSeatStatus,
-            winnerInfo,
-            rules,
-          });
-        } else if (isLoser) {
-          points -= record.winnerInfos.reduce<number>((total, w) => {
-            const hasDealerPoint = isDealer || w.winnerUuid === dealerUuid;
-
-            total += calcWinnerInfoPoints({
-              basePoints,
-              hasDealerPoint,
-              excludeDealerPoint,
-              dealerSeatStatus,
-              winnerInfo: w,
-              rules,
-            });
-
-            return total;
-          }, 0);
-        }
-        break;
-      case EResults.SelfDrawn:
-        const winnerInfo = record.winnerInfos[0];
-
-        if (isWinner) {
-          const hasDealerPoint = isDealer
-            ? [true, true, true]
-            : [true, false, false];
-
-          points += hasDealerPoint.reduce<number>((total, h) => {
-            total += calcWinnerInfoPoints({
-              basePoints,
-              hasDealerPoint: h,
-              excludeDealerPoint,
-              dealerSeatStatus,
-              winnerInfo,
-              rules,
-            });
-
-            return total;
-          }, 0);
-        } else {
-          const hasDealerPoint =
-            isDealer || winnerInfo.winnerUuid === dealerUuid;
-
-          points -= calcWinnerInfoPoints({
-            basePoints,
-            hasDealerPoint,
-            excludeDealerPoint,
-            dealerSeatStatus,
-            winnerInfo,
-            rules,
-          });
-        }
-        break;
-    }
-
-    return points;
   }, 0);
 
   return totalPoints;
+}
+
+export function calcRecordPoints(
+  points: number,
+  record: Record,
+  playerUuid: string,
+  basePoints: number,
+  excludeDealerPoint: boolean,
+  rules: Array<Rule> | null
+): number {
+  const { seatStatuses, result, winnerInfos, loserUuid } = record;
+
+  const dealerSeatStatus = seatStatuses.find((s) => s.isDealer) as SeatStatus;
+  const winnerSeatStatuses = seatStatuses.filter((s) =>
+    winnerInfos.find((w) => w.winnerUuid === s.playerUuid)
+  );
+  const loserSeatStatus = seatStatuses.find((s) => s.playerUuid === loserUuid);
+
+  const dealerUuid = dealerSeatStatus.playerUuid;
+
+  const isDealer = dealerUuid === playerUuid;
+  const isWinner =
+    winnerSeatStatuses.find((s) => s.playerUuid === playerUuid) !== undefined;
+  const isLoser = loserSeatStatus?.playerUuid === playerUuid;
+
+  switch (result) {
+    case EResults.Winning:
+      if (isWinner) {
+        const winnerInfo = record.winnerInfos.find(
+          (w) => w.winnerUuid === playerUuid
+        ) as WinnerInfo;
+
+        const hasDealerPoint =
+          isDealer || loserSeatStatus?.playerUuid === dealerUuid;
+
+        points += calcWinnerInfoPoints({
+          basePoints,
+          hasDealerPoint,
+          excludeDealerPoint,
+          dealerSeatStatus,
+          winnerInfo,
+          rules,
+        });
+      } else if (isLoser) {
+        points -= record.winnerInfos.reduce<number>((total, w) => {
+          const hasDealerPoint = isDealer || w.winnerUuid === dealerUuid;
+
+          total += calcWinnerInfoPoints({
+            basePoints,
+            hasDealerPoint,
+            excludeDealerPoint,
+            dealerSeatStatus,
+            winnerInfo: w,
+            rules,
+          });
+
+          return total;
+        }, 0);
+      }
+      break;
+    case EResults.SelfDrawn:
+      const winnerInfo = record.winnerInfos[0];
+
+      if (isWinner) {
+        const hasDealerPoint = isDealer
+          ? [true, true, true]
+          : [true, false, false];
+
+        points += hasDealerPoint.reduce<number>((total, h) => {
+          total += calcWinnerInfoPoints({
+            basePoints,
+            hasDealerPoint: h,
+            excludeDealerPoint,
+            dealerSeatStatus,
+            winnerInfo,
+            rules,
+          });
+
+          return total;
+        }, 0);
+      } else {
+        const hasDealerPoint = isDealer || winnerInfo.winnerUuid === dealerUuid;
+
+        points -= calcWinnerInfoPoints({
+          basePoints,
+          hasDealerPoint,
+          excludeDealerPoint,
+          dealerSeatStatus,
+          winnerInfo,
+          rules,
+        });
+      }
+      break;
+  }
+
+  return points;
 }
 
 function calcWinnerInfoPoints(data: {

@@ -74,6 +74,7 @@
 
     <div
       id="rules-table-container"
+      *ngIf="ruleUuidsInUse$ | async as ruleUuidsInUse"
       class="w-screen max-w-sm border-2 overflow-auto"
     >
       <table mat-table recycleRows [dataSource]="rules" matSort class="w-full">
@@ -81,7 +82,7 @@
           mat-header-row
           *matHeaderRowDef="displayedColumns; sticky: true"
         ></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr mat-row *matRowDef="let rule; columns: displayedColumns"></tr>
         <tr
           mat-footer-row
           *matFooterRowDef="displayedColumns; sticky: true"
@@ -100,7 +101,7 @@
           </td>
         </ng-container>
 
-        <!-- 台數: points: 牌型台數 points -->
+        <!-- 台數 points: 牌型台數 points -->
         <ng-container matColumnDef="points">
           <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
             台數
@@ -134,7 +135,7 @@
               <button
                 type="button"
                 mat-icon-button
-                [disabled]="(ruleUuidsInUse$ | async)?.has(rule.uuid)"
+                [disabled]="ruleUuidsInUse.has(rule.uuid)"
                 (click)="onDeleteRule(rule)"
               >
                 <mat-icon>delete</mat-icon>
