@@ -172,7 +172,7 @@ export class BoardService {
     );
     const isDealerOnLastSeat = dealerIndex === seatStatuses.length - 1;
 
-    if (isDealerOnLastSeat) {
+    if (isDealerOnLastSeat && !isDealerWinner) {
       this.changeWind();
     }
 

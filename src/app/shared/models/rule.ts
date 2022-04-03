@@ -9,7 +9,12 @@ export class Rule {
   points: number = 0; // 牌型台數
   isDefault: boolean = false; // 是否為預設牌型
 
-  constructor(data?: { uuid?: string; name?: string; points?: number; isDefault?: boolean }) {
+  constructor(data?: {
+    uuid?: string;
+    name?: string;
+    points?: number;
+    isDefault?: boolean;
+  }) {
     if (data) {
       this.uuid = data.uuid ?? this.uuid;
       this.name = data.name ?? this.name;
@@ -30,7 +35,8 @@ export class Rule {
 export const RULES: Array<Rule> = [
   // 自摸台
   new Rule({ name: '門清', points: 1, isDefault: true }),
-  new Rule({ name: '門清自摸', points: 2, isDefault: true }),
+  new Rule({ name: '自摸', points: 1, isDefault: true }),
+  new Rule({ name: '門清自摸', points: 3, isDefault: true }),
   new Rule({ name: '海底撈月', points: 1, isDefault: true }),
   // 單吊台
   new Rule({ name: '偏張', points: 1, isDefault: true }),
